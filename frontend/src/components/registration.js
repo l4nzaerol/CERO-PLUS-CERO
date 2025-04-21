@@ -7,7 +7,6 @@ const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [role, setRole] = useState("team_member"); // Default role is 'team_member'
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
@@ -27,21 +26,24 @@ const Register = () => {
             const response = await fetch("http://127.0.0.1:8000/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password, password_confirmation: confirmPassword, role }),
+                body: JSON.stringify({ name, email, password, password_confirmation: confirmPassword}),
             });
 
             const data = await response.json(); // Parse API response
 
             if (response.ok) {
-                // Redirect user to login page after successful registration
                 navigate("/");
             } else {
-                // Display error message if registration fails
-                setError(data.message || "Registration failed");
+                let errorMsg = data.message;
+                if (data.errors) {
+                    errorMsg = Object.values(data.errors).flat().join(" ");
+                }
+                setError(errorMsg || "Registration failed");
             }
+            
         } catch (error) {
             // Handle server errors
-            setError("Server error");
+            setError("Server error reg");
         }
     };
 
@@ -96,18 +98,6 @@ const Register = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                     />
-
-                    {/* Role selection dropdown */}
-                    <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                    >
-                        <option value="admin">Admin</option>
-                        <option value="project_manager">Project Manager</option>
-                        <option value="team_member">Team Member</option>
-                        <option value="client">Client</option>
-                    </select>
 
                     {/* Register button */}
                     <button
