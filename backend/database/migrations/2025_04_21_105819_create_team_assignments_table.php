@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Migration
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('team_assignments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+        
+            $table->unique(['project_id', 'user_id']); // Prevent duplicate assignments
         });
-
     }
 
     /**
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('team_assignments');
     }
 };

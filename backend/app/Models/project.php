@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class project extends Model
+class Project extends Model
 {
     use HasFactory;
 
@@ -16,4 +16,21 @@ class project extends Model
         'budget',
         'status',
     ];
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'team_assignments');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+
 }
