@@ -24,7 +24,7 @@ const App = () => {
         <Router>
             <Routes>
                 {/* Redirect to dashboard if token exists, otherwise show login page */}
-                <Route path="/" element={token ? <Navigate to="/login" /> : <Login onLogin={handleLogin} />} />
+                <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
                 
                 {/* Registration page route */}
                 <Route path="/register" element={<Registration />} />
