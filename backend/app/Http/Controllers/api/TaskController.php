@@ -42,32 +42,25 @@ class TaskController extends Controller
             'status' => 'in:todo,in_progress,done',
             'priority' => 'in:low,medium,high',
             'project_id' => 'required|exists:projects,id',
-            'assigned_to' => 'nullable|exists:users,id',
         ]);
-
+    
         $project = Project::findOrFail($request->project_id);
-
-        // Check if current user is the creator of the project
+    
         if ($project->user_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
-
-        // Optional: Check if the assigned user is a project member
-        if ($request->assigned_to && !$project->users->contains($request->assigned_to)) {
-            return response()->json(['error' => 'Assigned user is not a member of the project'], 422);
-        }
-
+    
         $task = Task::create([
             'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status ?? 'todo',
             'priority' => $request->priority ?? 'medium',
             'project_id' => $request->project_id,
-            'assigned_to' => $request->assigned_to,
         ]);
-
+    
         return response()->json($task, 201);
     }
+
 
     /**
      * Display the specified resource.
