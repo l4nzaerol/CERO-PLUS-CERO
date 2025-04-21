@@ -2,73 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Laravel\Sanctum\HasApiTokens;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // REGISTER FUNCTION
+    /**
+     * Register a new user
+     */
     public function register(Request $request)
     {
-        // Validate request
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'role' => 'required|in:customer,employee'
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:admin,project_manager,team_member,client',
         ]);
 
-        // Create user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role
+            'role' => $request->role,
         ]);
 
-        // Generate token
-        $token = $user->createToken('API Token')->plainTextToken;
-
-        // Return response
         return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user,
-            'token' => $token
+            'message' => 'User registered successfully!',
+            'user' => $user
         ], 201);
     }
 
-    // LOGIN FUNCTION
+    /**
+     * Login a user
+     */
     public function login(Request $request)
     {
-        // Validate request
         $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string'
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
-        // Attempt to authenticate user
         if (!Auth::attempt($request->only('email', 'password'))) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.']
-            ]);
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // Generate token for authenticated user
         $user = Auth::user();
-        $token = $user->createToken('API Token')->plainTextToken;
+        $token = $user->createToken('authToken')->plainTextToken;
 
-        // Return response
         return response()->json([
-            'message' => 'Login successful',
+            'message' => 'Login successful!',
             'user' => $user,
             'token' => $token
-        ], 200);
+        ]);
     }
 
-    // LOGOUT FUNCTION
+    /**
+     * Logout a user
+     */
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
