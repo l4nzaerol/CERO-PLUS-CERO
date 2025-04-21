@@ -1,36 +1,35 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/login.js";
-import Register from "./components/registration.js";
-import Dashboard from "./components/dashboard.js";
-import "./App.css";
+import Login from "./components/login";
+import Registration from "./components/registration";
+import Dashboard from "./components/dashboard";
 
 const App = () => {
-    // State to manage authentication token, initialized from localStorage
+    // State to store authentication token from local storage
     const [token, setToken] = useState(localStorage.getItem("token"));
 
-    // Function to handle login and store the token in localStorage
+    // Function to handle login and store token in local storage
     const handleLogin = (newToken) => {
-        localStorage.setItem("token", newToken); // Save token for persistent login
+        localStorage.setItem("token", newToken);
         setToken(newToken);
     };
 
-    // Function to handle logout and remove the token from localStorage
+    // Function to handle logout and remove token from local storage
     const handleLogout = () => {
-        localStorage.removeItem("token"); // Clear stored token
+        localStorage.removeItem("token");
         setToken(null);
     };
 
     return (
         <Router>
             <Routes>
-                {/* If user is authenticated, redirect to dashboard; otherwise, show login page */}
-                <Route path="/" element={token ? <Navigate to="/login" /> : <Login onLogin={handleLogin} />} />
-
-                {/* If user is authenticated, redirect to dashboard; otherwise, show registration page */}
-                <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <Register onRegister={handleLogin} />} />
-
-                {/* If user is authenticated, show dashboard; otherwise, redirect to login */}
+                {/* Redirect to dashboard if token exists, otherwise show login page */}
+                <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />} />
+                
+                {/* Registration page route */}
+                <Route path="/register" element={<Registration />} />
+                
+                {/* Redirect to login if not authenticated, otherwise show dashboard */}
                 <Route path="/dashboard" element={token ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
             </Routes>
         </Router>

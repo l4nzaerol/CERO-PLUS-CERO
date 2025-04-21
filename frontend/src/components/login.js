@@ -1,81 +1,68 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../App.css";
+import "../style/login.css"; // Import the CSS file
 
+// Login component handles user authentication and navigation to the dashboard.
 const Login = ({ onLogin }) => {
-    // State variables to store user input
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    
+    const [email, setEmail] = useState(""); // State to store email input
+    const [password, setPassword] = useState(""); // State to store password input
+    const [error, setError] = useState(""); // State to store error messages
     const navigate = useNavigate();
 
-    // Function to handle login form submission
+    // Handle login form submission
     const handleLogin = async (e) => {
-        e.preventDefault(); // Prevents default form submission behavior
+        e.preventDefault();
 
         try {
-            // Send login request to the API
             const response = await fetch("http://127.0.0.1:8000/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }), // Convert input values to JSON
+                body: JSON.stringify({ email, password }), // Send email and password to the API
             });
 
-            const data = await response.json(); // Parse API response
+            const data = await response.json();
 
             if (response.ok) {
-                // Store authentication token in localStorage
-                localStorage.setItem("token", data.token);
-
-                // Trigger login callback function
-                onLogin(data.token);
-
-                // Redirect user to the dashboard after successful login
-                navigate("/dashboard");
+                onLogin(data.token); // Pass the token to the parent component
+                navigate("/dashboard"); // Redirect to the dashboard
             } else {
-                // Display error message if login fails
-                setError(data.message || "Login failed");
+                setError(data.message || "Login failed"); // Display error message
             }
         } catch (error) {
-            // Handle server errors
-            setError("Server error");
+            setError("Server error"); // Handle server errors
         }
     };
 
     return (
-        <div className="login-container">
-            <h2>Login</h2>
-            {/* Display error message if authentication fails */}
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            
-            {/* Login form */}
-            <form onSubmit={handleLogin}>
-                {/* Email input field */}
-                <input 
-                    type="email" 
-                    placeholder="Email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    required 
-                />
-                
-                {/* Password input field */}
-                <input 
-                    type="password" 
-                    placeholder="Password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
-                />
-                
-                {/* Login button */}
-                <button type="submit">Login</button>
-            </form>
-
-            {/* Registration prompt */}
-            <p>Don't have an account?</p>
-            <button onClick={() => navigate("/register")}>Register</button> {/* Redirects to registration page */}
+        <div className="auth-container">
+            <div className="auth-box">
+                <h2 className="auth-title">Klick Inc</h2>
+                {error && <p className="auth-error">{error}</p>}
+                <form onSubmit={handleLogin}>
+                    {/* Email input field */}
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="auth-input"
+                    />
+                    {/* Password input field */}
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="auth-input"
+                    />
+                    {/* Submit button */}
+                    <button type="submit" className="auth-button">Login</button>
+                </form>
+                {/* Button to navigate to the registration page */}
+                <button onClick={() => navigate("/register")} className="auth-register">Create New Account</button>
+            </div>
         </div>
     );
 };
