@@ -5,16 +5,16 @@ import Registration from "./components/registration";
 import Dashboard from "./components/dashboard";
 
 const App = () => {
-    // State to manage authentication token, initialized from localStorage
+    // State to store authentication token from local storage
     const [token, setToken] = useState(localStorage.getItem("token"));
 
-    // Function to handle login and store the token in localStorage
+    // Function to handle login and store token in local storage
     const handleLogin = (newToken) => {
         localStorage.setItem("token", newToken);
         setToken(newToken);
     };
 
-    // Function to handle logout and remove the token from localStorage
+    // Function to handle logout and remove token from local storage
     const handleLogout = () => {
         localStorage.removeItem("token");
         setToken(null);
@@ -23,13 +23,13 @@ const App = () => {
     return (
         <Router>
             <Routes>
-                {/* If user is authenticated, redirect to dashboard; otherwise, show login page */}
+                {/* Redirect to dashboard if token exists, otherwise show login page */}
                 <Route path="/" element={token ? <Navigate to="/login" /> : <Login onLogin={handleLogin} />} />
-
-                {/* If user is authenticated, redirect to dashboard; otherwise, show registration page */}
-                <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <Register onRegister={handleLogin} />} />
-
-                {/* If user is authenticated, show dashboard; otherwise, redirect to login */}
+                
+                {/* Registration page route */}
+                <Route path="/register" element={<Registration />} />
+                
+                {/* Redirect to login if not authenticated, otherwise show dashboard */}
                 <Route path="/dashboard" element={token ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
             </Routes>
         </Router>
