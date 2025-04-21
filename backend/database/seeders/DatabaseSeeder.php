@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
             'name' => 'user',
             'email' => 'user@gmail.com', // Ensure email is unique
             'password' => Hash::make('userpassword'),
-            'role' => User::TEAM_MEMBER,
         ]);
     }
 }
