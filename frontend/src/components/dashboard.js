@@ -108,6 +108,10 @@ const Dashboard = ({ onLogout }) => {
                         <FolderKanban size={16} />
                         Projects
                     </li>
+                    <li className={activeTab === "task" ? "active" : ""} onClick={() => setActiveTab("task")}>
+                        <FolderKanban size={16} />
+                        My Task
+                    </li>
                 </ul>
                 <button className="logout-btn" onClick={handleLogout}>
                     <LogOut size={16} /> Logout
