@@ -16,7 +16,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->decimal('budget', 10, 2);
+            $table->enum('status', ['active', 'completed', 'on_hold'])->default('active');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
 

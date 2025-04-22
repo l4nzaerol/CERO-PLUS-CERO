@@ -43,7 +43,11 @@ class ProjectController extends Controller
             'user_id' => auth()->id(),
         ]);
     
-        return redirect()->route('projects.show', $project->id)->with('success', 'Project created!');
+        return response()->json([
+            'message' => 'Project created!',
+            'project' => $project
+        ]);
+        
     }
 
     /**
