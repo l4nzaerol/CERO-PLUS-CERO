@@ -32,7 +32,7 @@ class ProjectController extends Controller
         $project = Project::create([
             'name' => $request->name,
             'description' => $request->description,
-            'user_id' => auth()->id(),
+            'owner_id' => auth()->id(), // ✅ correct
             'budget' => $request->budget,
             'status' => $request->status,
         ]);
