@@ -1,63 +1,57 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../style/login.css"; 
 
+// Login component handles user authentication and navigation to the dashboard.
 const Login = ({ onLogin }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [email, setEmail] = useState(""); // State to store email input
+    const [password, setPassword] = useState(""); // State to store password input
+    const [error, setError] = useState(""); // State to store error messages
     const navigate = useNavigate();
 
+    // Handle login form submission
     const handleLogin = async (e) => {
         e.preventDefault();
+
         try {
             const response = await fetch("http://127.0.0.1:8000/api/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }), // Send email and password to the API
             });
+
             const data = await response.json();
+
             if (response.ok) {
-                localStorage.setItem("token", data.token);
-                onLogin(data.token);
-                navigate("/dashboard");
+                onLogin(data.token); // Pass the token to the parent component
+                navigate("/dashboard"); // Redirect to the dashboard
             } else {
-                setError(data.message);
+                setError(data.message || "Login failed"); // Display error message
             }
         } catch (error) {
-            console.error("Login failed:", error);
-            setError("Login failed. Please try again.");
+            setError("Server error"); // Handle server errors
         }
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-box">
-                <h2 className="auth-title">Login</h2>
-                <form onSubmit={handleLogin}>
-                    {error && <p className="auth-error">{error}</p>}
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="auth-input"
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="auth-input"
-                        required
-                    />
-                    <button type="submit" className="auth-button">Login</button>
-                </form>
-                
-            </div>
+        <div>
+            <form onSubmit={handleLogin}>
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <button type="submit">Login</button>
+                {error && <p>{error}</p>}
+            </form>
         </div>
     );
 };
