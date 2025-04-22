@@ -65,7 +65,7 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
 
-        if ($project->user_id !== auth()->id()) {
+        if ($project->owner_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -89,7 +89,7 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
 
-        if ($project->user_id !== auth()->id()) {
+        if ($project->owner_id !== auth()->id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
