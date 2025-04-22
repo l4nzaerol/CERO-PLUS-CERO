@@ -14,7 +14,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        $projects = Project::where('owner_id', auth()->id())->get();
+    return response()->json($projects);
     }
 
     /**
@@ -55,7 +56,16 @@ class ProjectController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $project = Project::with('members')->findOrFail($id);
+
+    // Check if user is owner or team member
+    $isMember = $project->members->contains('id', auth()->id());
+    if ($project->owner_id !== auth()->id() && !$isMember) {
+        return response()->json(['error' => 'Unauthorized'], 403);
+    }
+
+    return response()->json($project);
+    
     }
 
     /**
