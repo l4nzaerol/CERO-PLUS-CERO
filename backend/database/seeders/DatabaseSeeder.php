@@ -22,8 +22,26 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         User::create([
-            'name' => 'user',
-            'email' => 'user@gmail.com', // Ensure email is unique
+            'name' => 'user1',
+            'email' => 'user1@gmail.com', // Ensure email is unique
+            'password' => Hash::make('userpassword'),
+        ]);
+
+        User::create([
+            'name' => 'user2',
+            'email' => 'user2@gmail.com', // Ensure email is unique
+            'password' => Hash::make('userpassword'),
+        ]);
+
+        User::create([
+            'name' => 'user3',
+            'email' => 'user3@gmail.com', // Ensure email is unique
+            'password' => Hash::make('userpassword'),
+        ]);
+
+        User::create([
+            'name' => 'user4',
+            'email' => 'user4@gmail.com', // Ensure email is unique
             'password' => Hash::make('userpassword'),
         ]);
     }
