@@ -1,23 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../style/login.css"; // Import the CSS file
+import "../styles/Registration.css"; // Import your CSS
 
-// Registration component handles user registration and navigation to the login page.
 const Registration = () => {
-    const [name, setName] = useState(""); // State to store name input
-    const [email, setEmail] = useState(""); // State to store email input
-    const [password, setPassword] = useState(""); // State to store password input
-    const [confirmPassword, setConfirmPassword] = useState(""); // State to store confirm password input
-    const [role, setRole] = useState("team_member"); // State to store selected role
-    const [error, setError] = useState(""); // State to store error messages
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [role, setRole] = useState("team_member");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    // Handle registration form submission
     const handleRegister = async (e) => {
         e.preventDefault();
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match"); // Validate password confirmation
+            setError("Passwords do not match");
             return;
         }
 
@@ -25,74 +23,84 @@ const Registration = () => {
             const response = await fetch("http://127.0.0.1:8000/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password, password_confirmation: confirmPassword, role }), // Send registration data to the API
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    password_confirmation: confirmPassword,
+                    role,
+                }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                navigate("/"); // Redirect to the login page
+                navigate("/");
             } else {
-                setError(data.message || "Registration failed"); // Display error message
+                setError(data.message || "Registration failed");
             }
         } catch (error) {
-            setError("Server error"); // Handle server errors
+            setError("Password must be at least 8 characters long");
         }
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-box">
-                <h2 className="auth-title">Create a New Account</h2>
-                {error && <p className="auth-error">{error}</p>}
+        <div className="registration-container"> 
+            <div className="registration-form">
+                <h2 className="registration-header">Register in Klick Inc.</h2>
+                {error && <p className="error-message">{error}</p>}
+
                 <form onSubmit={handleRegister}>
-                    {/* Name input field */}
                     <input
                         type="text"
                         placeholder="Full Name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        className="auth-input"
+                        className="input-field"
                     />
-                    {/* Email input field */}
                     <input
                         type="email"
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="auth-input"
+                        className="input-field"
                     />
-                    {/* Password input field */}
                     <input
                         type="password"
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="auth-input"
+                        className="input-field"
                     />
-                    {/* Confirm password input field */}
                     <input
                         type="password"
                         placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
-                        className="auth-input"
+                        className="input-field"
                     />
-                    {/* Role selection dropdown */}
-                    <select value={role} onChange={(e) => setRole(e.target.value)} className="auth-input">
+
+                    {/* Role dropdown below Confirm Password */}
+                    <select
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="input-field"
+                    >
                         <option value="project_manager">Project Manager</option>
                         <option value="team_member">Team Member</option>
                         <option value="client">Client</option>
                     </select>
-                    {/* Submit button */}
-                    <button type="submit" className="auth-button">Sign Up</button>
+
+                    <button type="submit" className="register-button">Register</button>
                 </form>
-                {/* Button to navigate back to the login page */}
-                <button onClick={() => navigate("/")} className="auth-register">Back to Login</button>
+
+                <button onClick={() => navigate("/")} className="back-to-login-button">
+                    Already have an account? Login
+                </button>
             </div>
         </div>
     );

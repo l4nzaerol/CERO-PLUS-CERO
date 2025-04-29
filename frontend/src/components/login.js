@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/Login.css";  // Updated CSS file
 
-// Login component handles user authentication and navigation to the dashboard.
 const Login = ({ onLogin }) => {
-    const [email, setEmail] = useState(""); // State to store email input
-    const [password, setPassword] = useState(""); // State to store password input
-    const [error, setError] = useState(""); // State to store error messages
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    // Handle login form submission
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -16,42 +15,66 @@ const Login = ({ onLogin }) => {
             const response = await fetch("http://127.0.0.1:8000/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }), // Send email and password to the API
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                onLogin(data.token); // Pass the token to the parent component
-                navigate("/dashboard"); // Redirect to the dashboard
+                // Store token and role in localStorage
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("role", data.user.role); // Assuming API returns user role
+
+                onLogin(data.token);
+                navigate("/dashboard");
             } else {
-                setError(data.message || "Login failed"); // Display error message
+                setError(data.message || "Login failed");
             }
         } catch (error) {
-            setError("Server error"); // Handle server errors
+            setError("Server error");
         }
     };
 
     return (
-        <div>
-            <form onSubmit={handleLogin}>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Login</button>
-                {error && <p>{error}</p>}
-            </form>
+        <div className="login-container">
+            <div className="login-box">
+                <div className="design-section">
+                    <h1 className="welcome-text">Welcome!</h1>
+                </div>
+
+                <div className="form-section">
+                    <h1>Klick Inc.</h1>
+                    <form onSubmit={handleLogin} className="login-form">
+                        {error && <p className="error-message">{error}</p>}
+
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="input-field"
+                        />
+
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="input-field"
+                        />
+
+                        <button type="submit" className="submit-button">Login</button>
+                    </form>
+                    <button 
+                        onClick={() => navigate("/register")} 
+                        className="register-button"
+                    >
+                        Register in Klick Inc.
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };

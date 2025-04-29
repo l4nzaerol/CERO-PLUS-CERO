@@ -3,36 +3,30 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\api\TaskController;
-use App\Http\Controllers\api\ProjectController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 
-/*
-|--------------------------------------------------------------------------|
-| API Routes                                                              |
-|--------------------------------------------------------------------------|
-| Here is where you can register API routes for your application. These   |
-| routes are loaded by the RouteServiceProvider and all of them will be   |
-| assigned to the "api" middleware group. Make something great!            |
-*/
-
+// Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
+// Protected routes
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Project Routes
-    Route::get('/projects', [ProjectController::class, 'index']);
-    Route::post('/projects', [ProjectController::class, 'store']);
-    Route::get('/projects/{id}', [ProjectController::class, 'show']);
-    Route::put('/projects/{id}', [ProjectController::class, 'update']);
-    Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
-    Route::post('/projects/{id}/add-member', [ProjectController::class, 'addMember']);
-    Route::get('/my-projects', [ProjectController::class, 'getMyProjects']);
+    // Project and Task CRUD
+    Route::apiResource('projects', ProjectController::class);
+    Route::post('projects/{project}/addMember', [ProjectController::class, 'addMember']);
+    Route::delete('projects/{project}/removeMember', [ProjectController::class, 'removeMember']);
 
-    // Task Routes (nested under a project)
-    Route::get('/projects/{projectId}/tasks', [TaskController::class, 'index']);
-    Route::post('/projects/{projectId}/tasks', [TaskController::class, 'store']);  // Corrected this line to be project-specific
-    Route::get('/tasks/{task}', [TaskController::class, 'show']);
-    Route::put('/tasks/{task}', [TaskController::class, 'update']);
+    // Route to get members of a specific project
+    Route::get('projects/{project}/members', [ProjectController::class, 'getMembers']); // New route for getting project members
+
+    Route::apiResource('tasks', TaskController::class);
+    Route::post('/tasks/{taskId}/assign', [TaskController::class, 'assignUsers']);
+
+
+    // User routes
+    Route::get('/team-members', [UserController::class, 'teamMembers']);
 });
